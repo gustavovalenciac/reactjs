@@ -14,7 +14,7 @@ describe(' Pruebas en 08-imp-exp', () => {
     })
 
     test('getHeroeById debe de retornar undefined si no existe un ID', () => {
-        const id = 1;
+        const id = 100;
         const hero = getHeroeById( id );
 
         expect( hero ).toEqual({
