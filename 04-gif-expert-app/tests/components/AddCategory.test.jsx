@@ -19,4 +19,41 @@ describe('Pruebas en <AddCategory />', () => {
         //screen.debug();
         expect( input.value ).toBe('Saitama');
     });
+
+    test('debe de llamar onNewCategory si el input tiene un valor', () => {
+        const inputValue = "Saitama";
+        const onNewCategory = jest.fn(); //Este simula la función que se está enviando
+        //  TODO : ????
+        render( <AddCategory onNewCategory={ onNewCategory }/> );
+
+        //  capturamos el input y el form
+        const input = screen.getByRole('textbox');
+        const form = screen.getByRole('form');
+
+        //  en el input simulamos el ingreso de datos, y simulamos el evento onsubmit
+        fireEvent.input( input, { target: { value: inputValue } });
+        fireEvent.submit( form ); //en el componente, en la función onsubmit, podemos poner un console log para comprobar que la prueba si se está ejecutando
+        
+        //Aqui, el input tiene que setearse a una cadena vacia
+        expect( input.value ).toBe('');
+
+        //Aqui esperamos que la función sea llamada, al menos una vez y con el valor de inputValue.
+        expect( onNewCategory ).toHaveBeenCalled();
+        expect( onNewCategory ).toHaveBeenCalledTimes(1);
+        expect( onNewCategory ).toHaveBeenCalledWith( inputValue );
+    });
+
+    test('no debe de llamar el onNewCategory si el input está vacío', () => {
+        // Este simula la función que se está enviando
+        const onNewCategory = jest.fn();
+        render( <AddCategory onNewCategory={ onNewCategory }/> );
+
+        // capturamos el form y simulamos su envio 
+        const form = screen.getByRole('form');
+        fireEvent.submit( form );
+
+        // Si llamamos a la función tiene que ser llamado 0 veces, o con la otra función de abajo se agrega
+        expect( onNewCategory ).toHaveBeenCalledTimes(0);
+        expect( onNewCategory ).not.toHaveBeenCalled();
+    });
 });
