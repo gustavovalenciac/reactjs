@@ -18,7 +18,7 @@ import { useFetchGifs } from "../../src/hooks/useFetchGifs";
 //  jest.mock:  Mock a module
 //  jest.spyOn: Spy or mock a function
 
-jest.mock('../../src/hooks/useFetchGifs');
+jest.mock('../../src/hooks/useFetchGifs'); //al hacer un mock, debemos tener la implementación ya puesta al hacer el test
 
 
 describe('Pruebas en  <GifGrid />', () => {
@@ -27,18 +27,47 @@ describe('Pruebas en  <GifGrid />', () => {
 
     test('debe de mostrar el loading inicialmente', () => {
         
+        //  simulamos el hook personalizado, y lo seteamos con los valores que debería contener
         useFetchGifs.mockReturnValue({
             images: [],
-            isLoading: true //si estuviera en false, mostraría error
+            isLoading: true //para cuando no esperamos imagenes si estuviera en false, mostraría error el getByText('Cargando...') ya que no se está cumpliendo
         })
 
-        render( <GifGrid category={ category }/> );
-        expect( screen.getByText('Cargando...') );
+        render( <GifGrid category={ category }/> ); //Renderizamos el componente con su prop
+        //  Si todo está como debería:
+        //  1: Debería mostrar el texto 'Cargando...' si isLoading es true
+        //  2: Debería mostrar lo del texto de la variable 'category'
+        expect( screen.getByText('Cargando...') );  
         expect( screen.getByText( category ) );
-        screen.debug();
+        //screen.debug();
     });
 
     test('debe de mostrar items cuando se cargan las imagenes useFetchGifs', () => {
+
+        //Data ficticia , Data fija
+        const gifs = [
+            {
+                id: 'ABC',
+                title: 'Saitama',
+                url: 'https://localhost/saitama.jpg'
+            },
+            {
+                id: '123',
+                title: 'Goku',
+                url: 'https://localhost/goku.jpg'
+            }
+        ];
+
+        //  simulamos el hook personalizado, y lo seteamos con los valores que debería contener
+        useFetchGifs.mockReturnValue({
+            images: gifs,
+            isLoading: false //en false es cuando ya no estamos esperando un loading y ya tenemos imagenes
+        })
+
         render( <GifGrid category={ category }/> )
+        //Por ejemplo, testeamos que sean 2 que recibimos
+        expect( screen.getAllByRole('img').length ).toBe(2);
+
+        //screen.debug();
     });
 });
